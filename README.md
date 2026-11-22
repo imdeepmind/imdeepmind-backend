@@ -38,11 +38,31 @@ npm run dev
 The server listens on `http://localhost:3000`. Migrations are a separate step
 (`src/migrate.ts`), so starting the server does not touch the database schema.
 
-| Endpoint   | URL                                 |
-| ---------- | ----------------------------------- |
-| Health     | `http://localhost:3000/health`      |
-| Swagger UI | `http://localhost:3000/api/docs`    |
-| Notes API  | `http://localhost:3000/api/v1/notes` |
+| Endpoint   | URL                                      |
+| ---------- | ---------------------------------------- |
+| Health     | `http://localhost:3000/health`           |
+| Swagger UI | `http://localhost:3000/api/docs`         |
+| Auth API   | `http://localhost:3000/api/v1/auth/login` |
+
+## Authentication
+
+The API uses username/password authentication (`up-auth`). Users are stored in
+the `users` table with a bcrypt-hashed password and a `verified` flag.
+
+| Method | Path                                   | Description                    |
+| ------ | -------------------------------------- | ------------------------------ |
+| `POST` | `/api/v1/auth/register`                | Create an account              |
+| `POST` | `/api/v1/auth/register/verify/otp`     | Confirm the registration OTP   |
+| `POST` | `/api/v1/auth/login`                   | Log in and receive a JWT       |
+| `GET`  | `/api/v1/auth/user/me`                 | Read the current profile       |
+| `PATCH`| `/api/v1/auth/user/me`                 | Update the current profile     |
+| `DELETE`| `/api/v1/auth/user/me`                | Delete the current profile     |
+
+Registration sends an OTP through the configured email integration. Locally the
+`dummy` provider prints the code to the server logs, so no real email is sent.
+Because the `verified` flag is configured as the verification field, login is
+rejected until the OTP is confirmed.
+
 
 ## Run everything in Docker
 
@@ -88,5 +108,6 @@ Run `./dev.sh` with no arguments for the full list.
 
 Configuration lives in [`src/config/app.config.ts`](src/config/app.config.ts)
 and is typed with `AppConfigInput` from ROSS. The database URL is read from
-`DATABASE_URL`; host/port come from `HOST`/`PORT` (see
+`DATABASE_URL`, the JWT signing secret from `JWT_SECRET` (at least 32
+characters), and host/port from `HOST`/`PORT` (see
 `src/config/server.config.ts`).

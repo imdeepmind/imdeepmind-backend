@@ -3,9 +3,12 @@ import type {AppConfigInput} from '@imdeepmind/ross';
 /**
  * Application configuration.
  *
- * Declares the app metadata, infrastructure connections, and the data models
- * the API exposes. The `notes` model is a simple example with an auto-managed
- * `id` and a searchable `title`.
+ * Declares the app metadata, infrastructure connections, the data models the
+ * API exposes, and authentication.
+ *
+ * The `users` model backs username/password authentication. It is the auth
+ * user model, so its CRUD routes are disabled by default; users are managed
+ * through the generated `/auth` routes instead.
  */
 export const appConfig: AppConfigInput = {
   application: {
@@ -38,9 +41,44 @@ export const appConfig: AppConfigInput = {
       engine: 'memory',
     },
   },
+  authentication: {
+    enabled: true,
+    jwtSecret: 'env:JWT_SECRET',
+    tokenExpiration: '1d',
+    userModel: {
+      modelName: 'users',
+      idField: 'id',
+      providerField: 'provider',
+    },
+    providers: [
+      {
+        type: 'up-auth',
+        config: {
+          fields: {
+            usernameField: 'username',
+            passwordField: 'password',
+            // Registration starts unverified and login rejects unverified
+            // users until the emailed OTP is confirmed.
+            isVerifiedField: 'verified',
+          },
+        },
+      },
+    ],
+  },
+  integrations: {
+    email: {
+      provider: 'aws-ses',
+      config: {
+        region: 'env:AWS_SES_REGION',
+        fromEmail: 'env:AWS_SES_FROM_EMAIL',
+        accessKeyId: 'env:AWS_ACCESS_KEY_ID',
+        secretAccessKey: 'env:AWS_SECRET_ACCESS_KEY',
+      },
+    },
+  },
   data: {
     models: {
-      notes: {
+      users: {
         // Adds `created_at` / `updated_at` columns maintained by the ORM.
         timestamps: true,
         fields: {
@@ -48,18 +86,30 @@ export const appConfig: AppConfigInput = {
             type: 'integer',
             primaryKey: true,
             autoIncrement: true,
-            // `id` is the identifier used by exposed routes.
             apis: ['index', 'edit', 'delete'],
           },
-          title: {
+          username: {
             type: 'string',
             nullable: false,
-            // `title` is the field users can search.
-            apis: ['search'],
+            unique: true,
+            apis: ['search', 'edit'],
           },
-          body: {
-            type: 'text',
-            nullable: true,
+          password: {
+            type: 'string',
+            nullable: false,
+            // Hashes are never returned by the API.
+            secret: true,
+            apis: ['edit'],
+          },
+          provider: {
+            type: 'string',
+            nullable: false,
+            default: 'up-auth',
+          },
+          verified: {
+            type: 'boolean',
+            nullable: false,
+            default: false,
           },
         },
       },

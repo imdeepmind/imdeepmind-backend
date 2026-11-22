@@ -10,6 +10,7 @@ x-api: &api
     PORT: 3000
     HOST: 0.0.0.0
     DATABASE_URL: postgresql://${POSTGRES_USER:-devuser}:${POSTGRES_PASSWORD:-devpassword}@db:5432/${POSTGRES_DB:-imdeepmind}
+    JWT_SECRET: ${JWT_SECRET:-dev-only-jwt-secret-change-me-in-production}
 
 services:
   migrate:
