@@ -1,0 +1,16 @@
+{
+  "extends": "./node_modules/gts/tsconfig-google.json",
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "build",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+
+    /* Source uses `import './x.ts'`; tsc rewrites these to `./x.js` in build/. */
+    "allowImportingTsExtensions": true,
+    "rewriteRelativeImportExtensions": true,
+
+    "skipLibCheck": true
+  },
+  "include": ["src"]
+}

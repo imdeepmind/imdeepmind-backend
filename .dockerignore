@@ -1,0 +1,22 @@
+# Dependencies and build output
+node_modules
+build
+coverage
+
+# Local tooling and VCS data
+.git
+.gitignore
+.editorconfig
+.prettierrc.cjs
+eslint.config.cjs
+eslint.ignores.cjs
+*.tsbuildinfo
+
+# Local environment files
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+npm-debug.log*
