@@ -8,4 +8,8 @@ export const applicationConfig: NonNullable<AppConfigInput['application']> = {
     enabled: true,
     path: '/health',
   },
+  cors: {
+    enabled: true,
+    origins: ['*'],
+  },
 };
