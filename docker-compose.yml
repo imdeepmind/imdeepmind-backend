@@ -2,8 +2,6 @@ x-api: &api
   build:
     context: .
     dockerfile: Dockerfile
-    additional_contexts:
-      ross: ../rocket/ross
   image: imdeepmind-backend:local
   environment:
     NODE_ENV: production
