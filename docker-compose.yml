@@ -9,7 +9,7 @@ x-api: &api
     NODE_ENV: production
     PORT: 3000
     HOST: 0.0.0.0
-    DATABASE_URL: postgresql://${POSTGRES_USER:-devuser}:${POSTGRES_PASSWORD:-devpassword}@db:5432/${POSTGRES_DB:-imdeepmind}
+    DATABASE_URL: postgresql://devuser:devpassword@db:5432/imdeepmind
     JWT_SECRET: ${JWT_SECRET:-dev-only-jwt-secret-change-me-in-production}
 
 services:
@@ -36,9 +36,9 @@ services:
   db:
     image: postgres:16-alpine
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-devuser}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-devpassword}
-      POSTGRES_DB: ${POSTGRES_DB:-imdeepmind}
+      POSTGRES_USER: devuser
+      POSTGRES_PASSWORD: devpassword
+      POSTGRES_DB: imdeepmind
     ports:
       # 5433 on the host so it does not clash with a local Postgres.
       - "5433:5432"
