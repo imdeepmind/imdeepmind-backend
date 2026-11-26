@@ -3,11 +3,9 @@
 FROM node:24-bookworm AS build
 ENV npm_config_allow_git=all
 WORKDIR /app
-COPY package.json package-lock.json ./
-RUN npm ci
-COPY tsconfig.json ./
+COPY package.json package-lock.json tsconfig.json ./
 COPY src ./src
-RUN npm run compile
+RUN npm ci
 RUN npm prune --omit=dev
 
 FROM node:24-bookworm-slim AS runtime
